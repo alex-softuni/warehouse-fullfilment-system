@@ -1,5 +1,7 @@
 package com.ft.warehousefullfilmentsystem.product;
 
+import com.ft.warehousefullfilmentsystem.inventory.Inventory;
+import com.ft.warehousefullfilmentsystem.inventory.InventoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,10 +13,12 @@ import java.util.UUID;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final InventoryRepository inventoryRepository;
 
     @Autowired
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository, InventoryRepository inventoryRepository) {
         this.productRepository = productRepository;
+        this.inventoryRepository = inventoryRepository;
     }
 
     @Transactional
@@ -35,6 +39,13 @@ public class ProductService {
         product.setPrice(request.price());
 
         Product savedProduct = productRepository.save(product);
+
+        Inventory inventory = new Inventory();
+        inventory.setProduct(savedProduct);
+        inventory.setAvailableQuantity(0);
+        inventory.setReservedQuantity(0);
+
+        inventoryRepository.save(inventory);
 
         return toResponse(savedProduct);
     }
