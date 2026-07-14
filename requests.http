@@ -8,6 +8,16 @@ Content-Type: application/json
   "price": 1499.99
 }
 
+### Create invalid product
+POST http://localhost:8080/api/products
+Content-Type: application/json
+
+{
+  "sku": "",
+  "name": "",
+  "price": -10
+}
+
 ### Get all products
 GET http://localhost:8080/api/products
 
