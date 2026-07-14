@@ -2,6 +2,7 @@ package com.ft.warehousefullfilmentsystem.product;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -16,6 +17,7 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
+    @Transactional
     public ProductResponse createProduct(ProductRequest request) {
 
         String normalizedSku = request.sku()
@@ -37,20 +39,23 @@ public class ProductService {
         return toResponse(savedProduct);
     }
 
+    @Transactional(readOnly = true)
     public List<ProductResponse> getAllProducts() {
-        return productRepository.findAll()
+        return productRepository.findAllByActiveTrue()
                 .stream()
                 .map(this::toResponse)
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public ProductResponse getProductById(UUID id) {
-        Product product = productRepository.findById(id)
+        Product product = productRepository.findByIdAndActiveTrue(id)
                 .orElseThrow(() -> new ProductNotFoundException(id));
 
         return toResponse(product);
     }
 
+    @Transactional
     public ProductResponse updateProduct(UUID id, UpdateProductRequest request) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException(id));
@@ -63,9 +68,14 @@ public class ProductService {
         return toResponse(updatedProduct);
     }
 
+    @Transactional
     public ProductResponse archiveProduct(UUID id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException(id));
+
+        if (!product.isActive()) {
+            return toResponse(product);
+        }
 
         product.setActive(false);
 
