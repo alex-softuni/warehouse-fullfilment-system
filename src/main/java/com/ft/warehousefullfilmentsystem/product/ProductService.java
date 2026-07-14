@@ -34,23 +34,13 @@ public class ProductService {
 
         Product savedProduct = productRepository.save(product);
 
-        return new ProductResponse(
-                savedProduct.getId(),
-                savedProduct.getSku(),
-                savedProduct.getName(),
-                savedProduct.getPrice()
-        );
+        return toResponse(savedProduct);
     }
 
     public List<ProductResponse> getAllProducts() {
         return productRepository.findAll()
                 .stream()
-                .map(product -> new ProductResponse(
-                        product.getId(),
-                        product.getSku(),
-                        product.getName(),
-                        product.getPrice()
-                ))
+                .map(this::toResponse)
                 .toList();
     }
 
@@ -58,6 +48,21 @@ public class ProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException(id));
 
+        return toResponse(product);
+    }
+
+    public ProductResponse updateProduct(UUID id, UpdateProductRequest request) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException(id));
+
+        product.setName(request.name().trim());
+        product.setPrice(request.price());
+
+        Product updatedProduct = productRepository.save(product);
+
+        return toResponse(updatedProduct);
+    }
+    private ProductResponse toResponse(Product product) {
         return new ProductResponse(
                 product.getId(),
                 product.getSku(),
