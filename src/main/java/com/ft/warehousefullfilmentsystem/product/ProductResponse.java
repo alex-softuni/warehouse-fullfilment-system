@@ -7,6 +7,7 @@ public record ProductResponse(
         UUID id,
         String sku,
         String name,
-        BigDecimal price
+        BigDecimal price,
+        boolean active
 ) {
 }

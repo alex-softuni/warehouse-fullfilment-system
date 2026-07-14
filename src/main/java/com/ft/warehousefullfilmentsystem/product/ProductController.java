@@ -41,4 +41,9 @@ public class ProductController {
                                          @Valid @RequestBody UpdateProductRequest request) {
         return productService.updateProduct(id, request);
     }
+
+    @PatchMapping("/{id}/archive")
+    public ProductResponse archiveProduct(@PathVariable UUID id) {
+        return productService.archiveProduct(id);
+    }
 }

@@ -62,12 +62,24 @@ public class ProductService {
 
         return toResponse(updatedProduct);
     }
+
+    public ProductResponse archiveProduct(UUID id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException(id));
+
+        product.setActive(false);
+
+        Product archivedProduct = productRepository.save(product);
+
+        return toResponse(archivedProduct);
+    }
     private ProductResponse toResponse(Product product) {
         return new ProductResponse(
                 product.getId(),
                 product.getSku(),
                 product.getName(),
-                product.getPrice()
+                product.getPrice(),
+                product.isActive()
         );
     }
 }
