@@ -92,6 +92,22 @@ public class ProductService {
                 .toList();
     }
 
+    @Transactional
+    public ProductResponse restoreProduct(UUID id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException(id));
+
+        if (product.isActive()) {
+            return toResponse(product);
+        }
+
+        product.setActive(true);
+
+        Product restoredProduct = productRepository.save(product);
+
+        return toResponse(restoredProduct);
+    }
+
     private ProductResponse toResponse(Product product) {
         return new ProductResponse(
                 product.getId(),

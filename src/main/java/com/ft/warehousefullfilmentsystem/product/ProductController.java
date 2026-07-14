@@ -51,4 +51,9 @@ public class ProductController {
     public List<ProductResponse> getArchivedProducts() {
         return productService.getArchivedProducts();
     }
+
+    @PatchMapping("/{id}/restore")
+    public ProductResponse restoreProduct(@PathVariable UUID id) {
+        return productService.restoreProduct(id);
+    }
 }

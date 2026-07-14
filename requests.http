@@ -41,3 +41,6 @@ PATCH http://localhost:8080/api/products/153a33fd-537c-49b6-babf-af000cc968f2/ar
 
 ### Get archived products
 GET http://localhost:8080/api/products/archived
+
+### Restore archived product
+PATCH http://localhost:8080/api/products/153a33fd-537c-49b6-babf-af000cc968f2/restore
