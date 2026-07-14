@@ -1,3 +1,4 @@
+### Create product
 POST http://localhost:8080/api/products
 Content-Type: application/json
 
@@ -6,3 +7,6 @@ Content-Type: application/json
   "name": "Business Laptop",
   "price": 1499.99
 }
+
+### Get all products
+GET http://localhost:8080/api/products

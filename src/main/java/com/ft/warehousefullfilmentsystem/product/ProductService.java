@@ -3,6 +3,8 @@ package com.ft.warehousefullfilmentsystem.product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ProductService {
 
@@ -37,5 +39,17 @@ public class ProductService {
                 savedProduct.getName(),
                 savedProduct.getPrice()
         );
+    }
+
+    public List<ProductResponse> getAllProducts() {
+        return productRepository.findAll()
+                .stream()
+                .map(product -> new ProductResponse(
+                        product.getId(),
+                        product.getSku(),
+                        product.getName(),
+                        product.getPrice()
+                ))
+                .toList();
     }
 }
