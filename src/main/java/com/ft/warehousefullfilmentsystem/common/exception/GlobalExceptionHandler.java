@@ -1,5 +1,6 @@
 package com.ft.warehousefullfilmentsystem.common.exception;
 
+import com.ft.warehousefullfilmentsystem.inventory.InventoryNotFoundException;
 import com.ft.warehousefullfilmentsystem.product.DuplicateSkuException;
 import com.ft.warehousefullfilmentsystem.product.ProductNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -58,6 +59,19 @@ public class GlobalExceptionHandler {
                 "Validation failed.",
                 LocalDateTime.now(),
                 validationErrors
+        );
+    }
+
+    @ExceptionHandler(InventoryNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiError handleInventoryNotFound(
+            InventoryNotFoundException exception
+    ) {
+        return new ApiError(
+                HttpStatus.NOT_FOUND.value(),
+                exception.getMessage(),
+                LocalDateTime.now(),
+                Map.of()
         );
     }
 
