@@ -1,0 +1,8 @@
+POST http://localhost:8080/api/products
+Content-Type: application/json
+
+{
+  "sku": "LAPTOP-001",
+  "name": "Business Laptop",
+  "price": 1499.99
+}

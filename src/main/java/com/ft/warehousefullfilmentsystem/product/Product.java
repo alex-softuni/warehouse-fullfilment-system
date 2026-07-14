@@ -1,0 +1,39 @@
+package com.ft.warehousefullfilmentsystem.product;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
+import java.util.UUID;
+
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@Table(
+        name = "products",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_product_sku",
+                        columnNames = "sku"
+                )
+        }
+)
+public class Product {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+
+    @Column(nullable = false, length = 50)
+    private String sku;
+
+    @Column(nullable = false, length = 150)
+    private String name;
+
+    @Column(nullable = false, precision = 12, scale = 2)
+    private BigDecimal price;
+
+}
