@@ -83,6 +83,15 @@ public class ProductService {
 
         return toResponse(archivedProduct);
     }
+
+    @Transactional(readOnly = true)
+    public List<ProductResponse> getArchivedProducts() {
+        return productRepository.findAllByActiveFalse()
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
     private ProductResponse toResponse(Product product) {
         return new ProductResponse(
                 product.getId(),

@@ -46,4 +46,9 @@ public class ProductController {
     public ProductResponse archiveProduct(@PathVariable UUID id) {
         return productService.archiveProduct(id);
     }
+
+    @GetMapping("/archived")
+    public List<ProductResponse> getArchivedProducts() {
+        return productService.getArchivedProducts();
+    }
 }
