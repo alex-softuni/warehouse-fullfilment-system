@@ -60,3 +60,12 @@ GET http://localhost:8080/api/inventory/product/153a33fd-537c-49b6-babf-af000cc9
 
 ### Get missing inventory
 GET http://localhost:8080/api/inventory/product/11111111-1111-1111-1111-111111111111
+
+### Receive stock
+POST http://localhost:8080/api/inventory/receive
+Content-Type: application/json
+
+{
+  "productId": "153a33fd-537c-49b6-babf-af000cc968f2",
+  "quantity": 25
+}

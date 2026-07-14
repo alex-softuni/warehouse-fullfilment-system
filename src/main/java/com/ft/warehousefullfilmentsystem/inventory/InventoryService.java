@@ -17,6 +17,24 @@ public class InventoryService {
 
 
     }
+
+    @Transactional
+    public InventoryResponse receiveStock(ReceiveStockRequest request) {
+        Inventory inventory = inventoryRepository
+                .findByProductId(request.productId())
+                .orElseThrow(() ->
+                        new InventoryNotFoundException(request.productId())
+                );
+
+        inventory.setAvailableQuantity(
+                inventory.getAvailableQuantity() + request.quantity()
+        );
+
+        Inventory updatedInventory = inventoryRepository.save(inventory);
+
+        return toResponse(updatedInventory);
+    }
+
     @Transactional(readOnly = true)
     public InventoryResponse getInventoryByProductId(UUID productId) {
         Inventory inventory = inventoryRepository.findByProductId(productId)
