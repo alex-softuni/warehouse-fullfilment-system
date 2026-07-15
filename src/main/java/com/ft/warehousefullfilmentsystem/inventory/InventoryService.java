@@ -1,5 +1,7 @@
 package com.ft.warehousefullfilmentsystem.inventory;
 
+import com.ft.warehousefullfilmentsystem.product.ProductNotFoundException;
+import com.ft.warehousefullfilmentsystem.product.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,11 +15,13 @@ public class InventoryService {
 
     private final InventoryRepository inventoryRepository;
     private final InventoryTransactionRepository transactionRepository;
+    private final ProductRepository productRepository;
 
     @Autowired
-    public InventoryService(InventoryRepository inventoryRepository, InventoryTransactionRepository inventoryTransactionRepository) {
+    public InventoryService(InventoryRepository inventoryRepository, InventoryTransactionRepository inventoryTransactionRepository, ProductRepository productRepository) {
         this.inventoryRepository = inventoryRepository;
         this.transactionRepository = inventoryTransactionRepository;
+        this.productRepository = productRepository;
     }
 
     @Transactional
@@ -72,6 +76,11 @@ public class InventoryService {
     public List<InventoryTransactionResponse> getTransactionHistory(
             UUID productId
     ) {
+
+        if (!productRepository.existsById(productId)) {
+            throw new ProductNotFoundException(productId);
+        }
+
         return transactionRepository
                 .findAllByProductIdOrderByCreatedAtDesc(productId)
                 .stream()
