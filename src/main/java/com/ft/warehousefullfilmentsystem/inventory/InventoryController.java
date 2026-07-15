@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -25,6 +26,11 @@ public class InventoryController {
     @PostMapping("/receive")
     public InventoryResponse receiveStock(@Valid @RequestBody ReceiveStockRequest request) {
         return inventoryService.receiveStock(request);
+    }
+
+    @GetMapping("/product/{productId}/transactions")
+    public List<InventoryTransactionResponse> getTransactionHistory(@PathVariable UUID productId) {
+        return inventoryService.getTransactionHistory(productId);
     }
 
 }

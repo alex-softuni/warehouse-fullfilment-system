@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -64,6 +65,28 @@ public class InventoryService {
                 inventory.getAvailableQuantity(),
                 inventory.getReservedQuantity(),
                 physicalQuantity
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public List<InventoryTransactionResponse> getTransactionHistory(
+            UUID productId
+    ) {
+        return transactionRepository
+                .findAllByProductIdOrderByCreatedAtDesc(productId)
+                .stream()
+                .map(this::toTransactionResponse)
+                .toList();
+    }
+
+    private InventoryTransactionResponse toTransactionResponse(InventoryTransaction transaction) {
+        return new InventoryTransactionResponse(
+                transaction.getId(),
+                transaction.getProduct().getId(),
+                transaction.getProduct().getSku(),
+                transaction.getType(),
+                transaction.getQuantity(),
+                transaction.getCreatedAt()
         );
     }
 }
