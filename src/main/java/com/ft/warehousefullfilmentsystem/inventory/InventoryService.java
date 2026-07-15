@@ -32,7 +32,18 @@ public class InventoryService {
                         new InventoryNotFoundException(request.productId())
                 );
 
-        inventory.setAvailableQuantity(inventory.getAvailableQuantity() + request.quantity());
+        int updatedQuantity;
+
+        try {
+            updatedQuantity = Math.addExact(
+                    inventory.getAvailableQuantity(),
+                    request.quantity()
+            );
+        } catch (ArithmeticException e) {
+            throw new InventoryOverflowException(request.productId());
+        }
+        
+        inventory.setAvailableQuantity(updatedQuantity);
 
         Inventory updatedInventory = inventoryRepository.save(inventory);
 

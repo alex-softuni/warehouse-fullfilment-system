@@ -1,6 +1,7 @@
 package com.ft.warehousefullfilmentsystem.common.exception;
 
 import com.ft.warehousefullfilmentsystem.inventory.InventoryNotFoundException;
+import com.ft.warehousefullfilmentsystem.inventory.InventoryOverflowException;
 import com.ft.warehousefullfilmentsystem.product.DuplicateSkuException;
 import com.ft.warehousefullfilmentsystem.product.ProductNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -69,6 +70,19 @@ public class GlobalExceptionHandler {
     ) {
         return new ApiError(
                 HttpStatus.NOT_FOUND.value(),
+                exception.getMessage(),
+                LocalDateTime.now(),
+                Map.of()
+        );
+    }
+
+    @ExceptionHandler(InventoryOverflowException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError handleInventoryOverflow(
+            InventoryOverflowException exception
+    ) {
+        return new ApiError(
+                HttpStatus.CONFLICT.value(),
                 exception.getMessage(),
                 LocalDateTime.now(),
                 Map.of()
