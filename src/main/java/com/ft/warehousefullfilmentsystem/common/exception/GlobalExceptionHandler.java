@@ -1,5 +1,6 @@
 package com.ft.warehousefullfilmentsystem.common.exception;
 
+import com.ft.warehousefullfilmentsystem.inventory.exception.InsufficientReservedStockException;
 import com.ft.warehousefullfilmentsystem.inventory.exception.InsufficientStockException;
 import com.ft.warehousefullfilmentsystem.inventory.exception.InventoryNotFoundException;
 import com.ft.warehousefullfilmentsystem.inventory.exception.InventoryOverflowException;
@@ -94,6 +95,18 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.CONFLICT)
     public ApiError handleInsufficientStock(
             InsufficientStockException exception
+    ) {
+        return new ApiError(
+                HttpStatus.CONFLICT.value(),
+                exception.getMessage(),
+                LocalDateTime.now(),
+                Map.of()
+        );
+    }
+    @ExceptionHandler(InsufficientReservedStockException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError handleInsufficientReservedStock(
+            InsufficientReservedStockException exception
     ) {
         return new ApiError(
                 HttpStatus.CONFLICT.value(),

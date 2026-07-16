@@ -93,3 +93,12 @@ Content-Type: application/json
   "productId": "153a33fd-537c-49b6-babf-af000cc968f2",
   "quantity": 100000
 }
+
+### Release reserved stock
+POST http://localhost:8080/api/inventory/release
+Content-Type: application/json
+
+{
+  "productId": "153a33fd-537c-49b6-babf-af000cc968f2",
+  "quantity": 2
+}

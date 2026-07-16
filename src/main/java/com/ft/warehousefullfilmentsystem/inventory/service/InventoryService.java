@@ -1,15 +1,13 @@
 package com.ft.warehousefullfilmentsystem.inventory.service;
 
+import com.ft.warehousefullfilmentsystem.inventory.api.dto.*;
+import com.ft.warehousefullfilmentsystem.inventory.exception.InsufficientReservedStockException;
 import com.ft.warehousefullfilmentsystem.inventory.exception.InsufficientStockException;
 import com.ft.warehousefullfilmentsystem.inventory.exception.InventoryNotFoundException;
 import com.ft.warehousefullfilmentsystem.inventory.exception.InventoryOverflowException;
 import com.ft.warehousefullfilmentsystem.inventory.domain.InventoryTransactionType;
 import com.ft.warehousefullfilmentsystem.inventory.domain.Inventory;
 import com.ft.warehousefullfilmentsystem.inventory.domain.InventoryTransaction;
-import com.ft.warehousefullfilmentsystem.inventory.api.dto.InventoryResponse;
-import com.ft.warehousefullfilmentsystem.inventory.api.dto.InventoryTransactionResponse;
-import com.ft.warehousefullfilmentsystem.inventory.api.dto.ReceiveStockRequest;
-import com.ft.warehousefullfilmentsystem.inventory.api.dto.ReserveStockRequest;
 import com.ft.warehousefullfilmentsystem.inventory.repository.InventoryRepository;
 import com.ft.warehousefullfilmentsystem.inventory.repository.InventoryTransactionRepository;
 import com.ft.warehousefullfilmentsystem.product.ProductNotFoundException;
@@ -86,8 +84,6 @@ public class InventoryService {
             );
         }
 
-
-
         int updatedReservedQuantity;
 
         try {
@@ -108,6 +104,54 @@ public class InventoryService {
         InventoryTransaction transaction = new InventoryTransaction();
         transaction.setProduct(inventory.getProduct());
         transaction.setType(InventoryTransactionType.STOCK_RESERVED);
+        transaction.setQuantity(request.quantity());
+        transaction.setCreatedAt(LocalDateTime.now());
+
+        transactionRepository.save(transaction);
+
+        return toResponse(updatedInventory);
+    }
+
+    @Transactional
+    public InventoryResponse releaseReservedStock(ReleaseStockRequest request) {
+        Inventory inventory = inventoryRepository
+                .findByProductId(request.productId())
+                .orElseThrow(() ->
+                        new InventoryNotFoundException(request.productId())
+                );
+
+        if (inventory.getReservedQuantity() < request.quantity()) {
+            throw new InsufficientReservedStockException(
+                    request.productId(),
+                    request.quantity(),
+                    inventory.getReservedQuantity()
+            );
+        }
+
+        int updatedAvailableQuantity;
+
+        try {
+            updatedAvailableQuantity = Math.addExact(
+                    inventory.getAvailableQuantity(),
+                    request.quantity()
+            );
+        } catch (ArithmeticException exception) {
+            throw new InventoryOverflowException(request.productId());
+        }
+
+        int updatedReservedQuantity =
+                inventory.getReservedQuantity() - request.quantity();
+
+        inventory.setAvailableQuantity(updatedAvailableQuantity);
+        inventory.setReservedQuantity(updatedReservedQuantity);
+
+        Inventory updatedInventory = inventoryRepository.save(inventory);
+
+        InventoryTransaction transaction = new InventoryTransaction();
+        transaction.setProduct(inventory.getProduct());
+        transaction.setType(
+                InventoryTransactionType.RESERVATION_RELEASED
+        );
         transaction.setQuantity(request.quantity());
         transaction.setCreatedAt(LocalDateTime.now());
 
