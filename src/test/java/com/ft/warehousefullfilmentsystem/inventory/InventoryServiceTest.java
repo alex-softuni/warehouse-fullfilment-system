@@ -231,5 +231,38 @@ public class InventoryServiceTest {
         verify(transactionRepository, never())
                 .save(any(InventoryTransaction.class));
     }
+
+    @Test
+    void shouldThrowExceptionWhenReservedQuantityOverflows() {
+        UUID productId = UUID.randomUUID();
+
+        Product product = new Product();
+        product.setSku("MONITOR-001");
+
+        Inventory inventory = new Inventory();
+        inventory.setProduct(product);
+        inventory.setAvailableQuantity(10);
+        inventory.setReservedQuantity(Integer.MAX_VALUE);
+
+        ReserveStockRequest request =
+                new ReserveStockRequest(productId, 1);
+
+        when(inventoryRepository.findByProductId(productId))
+                .thenReturn(Optional.of(inventory));
+
+        assertThrows(
+                InventoryOverflowException.class,
+                () -> inventoryService.reserveStock(request)
+        );
+
+        assertEquals(10, inventory.getAvailableQuantity());
+        assertEquals(Integer.MAX_VALUE, inventory.getReservedQuantity());
+
+        verify(inventoryRepository, never())
+                .save(any(Inventory.class));
+
+        verify(transactionRepository, never())
+                .save(any(InventoryTransaction.class));
+    }
 }
 
