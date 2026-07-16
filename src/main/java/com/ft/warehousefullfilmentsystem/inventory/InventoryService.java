@@ -58,6 +58,43 @@ public class InventoryService {
         return toResponse(updatedInventory);
     }
 
+    @Transactional
+    public InventoryResponse reserveStock(ReserveStockRequest request) {
+        Inventory inventory = inventoryRepository
+                .findByProductId(request.productId())
+                .orElseThrow(() ->
+                        new InventoryNotFoundException(request.productId())
+                );
+
+        if (inventory.getAvailableQuantity() < request.quantity()) {
+            throw new InsufficientStockException(
+                    request.productId(),
+                    request.quantity(),
+                    inventory.getAvailableQuantity()
+            );
+        }
+
+        inventory.setAvailableQuantity(
+                inventory.getAvailableQuantity() - request.quantity()
+        );
+
+        inventory.setReservedQuantity(
+                inventory.getReservedQuantity() + request.quantity()
+        );
+
+        Inventory updatedInventory = inventoryRepository.save(inventory);
+
+        InventoryTransaction transaction = new InventoryTransaction();
+        transaction.setProduct(inventory.getProduct());
+        transaction.setType(InventoryTransactionType.STOCK_RESERVED);
+        transaction.setQuantity(request.quantity());
+        transaction.setCreatedAt(LocalDateTime.now());
+
+        transactionRepository.save(transaction);
+
+        return toResponse(updatedInventory);
+    }
+
     @Transactional(readOnly = true)
     public InventoryResponse getInventoryByProductId(UUID productId) {
         Inventory inventory = inventoryRepository.findByProductId(productId)

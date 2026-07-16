@@ -33,4 +33,11 @@ public class InventoryController {
         return inventoryService.getTransactionHistory(productId);
     }
 
+    @PostMapping("/reserve")
+    public InventoryResponse reserveStock(
+            @Valid @RequestBody ReserveStockRequest request
+    ) {
+        return inventoryService.reserveStock(request);
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.ft.warehousefullfilmentsystem.common.exception;
 
+import com.ft.warehousefullfilmentsystem.inventory.InsufficientStockException;
 import com.ft.warehousefullfilmentsystem.inventory.InventoryNotFoundException;
 import com.ft.warehousefullfilmentsystem.inventory.InventoryOverflowException;
 import com.ft.warehousefullfilmentsystem.product.DuplicateSkuException;
@@ -80,6 +81,19 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.CONFLICT)
     public ApiError handleInventoryOverflow(
             InventoryOverflowException exception
+    ) {
+        return new ApiError(
+                HttpStatus.CONFLICT.value(),
+                exception.getMessage(),
+                LocalDateTime.now(),
+                Map.of()
+        );
+    }
+
+    @ExceptionHandler(InsufficientStockException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError handleInsufficientStock(
+            InsufficientStockException exception
     ) {
         return new ApiError(
                 HttpStatus.CONFLICT.value(),
