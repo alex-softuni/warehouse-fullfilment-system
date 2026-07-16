@@ -1,12 +1,14 @@
 package com.ft.warehousefullfilmentsystem.inventory;
 
 
+import com.ft.warehousefullfilmentsystem.inventory.api.dto.ReleaseStockRequest;
 import com.ft.warehousefullfilmentsystem.inventory.domain.Inventory;
 import com.ft.warehousefullfilmentsystem.inventory.domain.InventoryTransaction;
 import com.ft.warehousefullfilmentsystem.inventory.domain.InventoryTransactionType;
 import com.ft.warehousefullfilmentsystem.inventory.api.dto.InventoryResponse;
 import com.ft.warehousefullfilmentsystem.inventory.api.dto.ReceiveStockRequest;
 import com.ft.warehousefullfilmentsystem.inventory.api.dto.ReserveStockRequest;
+import com.ft.warehousefullfilmentsystem.inventory.exception.InsufficientReservedStockException;
 import com.ft.warehousefullfilmentsystem.inventory.exception.InsufficientStockException;
 import com.ft.warehousefullfilmentsystem.inventory.exception.InventoryNotFoundException;
 import com.ft.warehousefullfilmentsystem.inventory.exception.InventoryOverflowException;
@@ -269,6 +271,144 @@ public class InventoryServiceTest {
 
         assertEquals(10, inventory.getAvailableQuantity());
         assertEquals(Integer.MAX_VALUE, inventory.getReservedQuantity());
+
+        verify(inventoryRepository, never())
+                .save(any(Inventory.class));
+
+        verify(transactionRepository, never())
+                .save(any(InventoryTransaction.class));
+    }
+
+    @Test
+    void shouldMoveReservedStockBackToAvailableStock() {
+        UUID productId = UUID.randomUUID();
+
+        Product product = new Product();
+        product.setSku("MONITOR-001");
+
+        Inventory inventory = new Inventory();
+        inventory.setProduct(product);
+        inventory.setAvailableQuantity(7);
+        inventory.setReservedQuantity(3);
+
+        ReleaseStockRequest request =
+                new ReleaseStockRequest(productId, 2);
+
+        when(inventoryRepository.findByProductId(productId))
+                .thenReturn(Optional.of(inventory));
+
+        when(inventoryRepository.save(inventory))
+                .thenReturn(inventory);
+
+        InventoryResponse response =
+                inventoryService.releaseReservedStock(request);
+
+        assertEquals(9, response.availableQuantity());
+        assertEquals(1, response.reservedQuantity());
+        assertEquals(10, response.physicalQuantity());
+
+        ArgumentCaptor<InventoryTransaction> transactionCaptor =
+                ArgumentCaptor.forClass(InventoryTransaction.class);
+
+        verify(transactionRepository)
+                .save(transactionCaptor.capture());
+
+        InventoryTransaction savedTransaction =
+                transactionCaptor.getValue();
+
+        assertEquals(
+                InventoryTransactionType.RESERVATION_RELEASED,
+                savedTransaction.getType()
+        );
+
+        assertEquals(2, savedTransaction.getQuantity());
+        assertEquals(product, savedTransaction.getProduct());
+    }
+
+    @Test
+    void shouldThrowExceptionWhenReservedStockIsInsufficient() {
+        UUID productId = UUID.randomUUID();
+
+        Product product = new Product();
+        product.setSku("MONITOR-001");
+
+        Inventory inventory = new Inventory();
+        inventory.setProduct(product);
+        inventory.setAvailableQuantity(7);
+        inventory.setReservedQuantity(2);
+
+        ReleaseStockRequest request =
+                new ReleaseStockRequest(productId, 5);
+
+        when(inventoryRepository.findByProductId(productId))
+                .thenReturn(Optional.of(inventory));
+
+        assertThrows(
+                InsufficientReservedStockException.class,
+                () -> inventoryService.releaseReservedStock(request)
+        );
+
+        assertEquals(7, inventory.getAvailableQuantity());
+        assertEquals(2, inventory.getReservedQuantity());
+
+        verify(inventoryRepository, never())
+                .save(any(Inventory.class));
+
+        verify(transactionRepository, never())
+                .save(any(InventoryTransaction.class));
+    }
+
+    @Test
+    void shouldThrowExceptionWhenReleasingFromMissingInventory() {
+        UUID productId = UUID.randomUUID();
+
+        ReleaseStockRequest request =
+                new ReleaseStockRequest(productId, 2);
+
+        when(inventoryRepository.findByProductId(productId))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                InventoryNotFoundException.class,
+                () -> inventoryService.releaseReservedStock(request)
+        );
+
+        verify(inventoryRepository, never())
+                .save(any(Inventory.class));
+
+        verify(transactionRepository, never())
+                .save(any(InventoryTransaction.class));
+    }
+
+    @Test
+    void shouldThrowExceptionWhenAvailableQuantityOverflowsDuringRelease() {
+        UUID productId = UUID.randomUUID();
+
+        Product product = new Product();
+        product.setSku("MONITOR-001");
+
+        Inventory inventory = new Inventory();
+        inventory.setProduct(product);
+        inventory.setAvailableQuantity(Integer.MAX_VALUE);
+        inventory.setReservedQuantity(1);
+
+        ReleaseStockRequest request =
+                new ReleaseStockRequest(productId, 1);
+
+        when(inventoryRepository.findByProductId(productId))
+                .thenReturn(Optional.of(inventory));
+
+        assertThrows(
+                InventoryOverflowException.class,
+                () -> inventoryService.releaseReservedStock(request)
+        );
+
+        assertEquals(
+                Integer.MAX_VALUE,
+                inventory.getAvailableQuantity()
+        );
+
+        assertEquals(1, inventory.getReservedQuantity());
 
         verify(inventoryRepository, never())
                 .save(any(Inventory.class));
