@@ -74,13 +74,22 @@ public class InventoryService {
             );
         }
 
-        inventory.setAvailableQuantity(
-                inventory.getAvailableQuantity() - request.quantity()
-        );
 
-        inventory.setReservedQuantity(
-                inventory.getReservedQuantity() + request.quantity()
-        );
+
+        int updatedReservedQuantity;
+
+        try {
+            updatedReservedQuantity = Math.addExact(
+                    inventory.getReservedQuantity(),
+                    request.quantity()
+            );
+        } catch (ArithmeticException exception) {
+            throw new InventoryOverflowException(request.productId());
+        }
+
+        inventory.setAvailableQuantity(inventory.getAvailableQuantity() - request.quantity());
+        inventory.setReservedQuantity(updatedReservedQuantity);
+
 
         Inventory updatedInventory = inventoryRepository.save(inventory);
 
