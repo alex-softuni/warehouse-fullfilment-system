@@ -49,4 +49,11 @@ public class InventoryController {
         return inventoryService.releaseReservedStock(request);
     }
 
+    @PostMapping("/ship")
+    public InventoryResponse shipStock(
+            @Valid @RequestBody ShipStockRequest request
+    ) {
+        return inventoryService.shipStock(request);
+    }
+
 }

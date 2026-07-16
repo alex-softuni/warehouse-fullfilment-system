@@ -67,7 +67,7 @@ Content-Type: application/json
 
 {
   "productId": "153a33fd-537c-49b6-babf-af000cc968f2",
-  "quantity": 25
+  "quantity": 250
 }
 
 ### Get inventory transaction history
@@ -96,6 +96,14 @@ Content-Type: application/json
 
 ### Release reserved stock
 POST http://localhost:8080/api/inventory/release
+Content-Type: application/json
+
+{
+  "productId": "153a33fd-537c-49b6-babf-af000cc968f2",
+  "quantity": 2
+}
+### Ship reserved stock
+POST http://localhost:8080/api/inventory/ship
 Content-Type: application/json
 
 {
