@@ -1,7 +1,7 @@
 package com.ft.warehousefullfilmentsystem.product;
 
-import com.ft.warehousefullfilmentsystem.inventory.Inventory;
-import com.ft.warehousefullfilmentsystem.inventory.InventoryRepository;
+import com.ft.warehousefullfilmentsystem.inventory.domain.Inventory;
+import com.ft.warehousefullfilmentsystem.inventory.repository.InventoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

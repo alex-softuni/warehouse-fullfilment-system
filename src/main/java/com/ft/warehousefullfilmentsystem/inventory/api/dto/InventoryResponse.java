@@ -1,4 +1,4 @@
-package com.ft.warehousefullfilmentsystem.inventory;
+package com.ft.warehousefullfilmentsystem.inventory.api.dto;
 
 
 import java.util.UUID;

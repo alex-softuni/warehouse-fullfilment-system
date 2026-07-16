@@ -1,6 +1,18 @@
 package com.ft.warehousefullfilmentsystem.inventory;
 
 
+import com.ft.warehousefullfilmentsystem.inventory.domain.Inventory;
+import com.ft.warehousefullfilmentsystem.inventory.domain.InventoryTransaction;
+import com.ft.warehousefullfilmentsystem.inventory.domain.InventoryTransactionType;
+import com.ft.warehousefullfilmentsystem.inventory.api.dto.InventoryResponse;
+import com.ft.warehousefullfilmentsystem.inventory.api.dto.ReceiveStockRequest;
+import com.ft.warehousefullfilmentsystem.inventory.api.dto.ReserveStockRequest;
+import com.ft.warehousefullfilmentsystem.inventory.exception.InsufficientStockException;
+import com.ft.warehousefullfilmentsystem.inventory.exception.InventoryNotFoundException;
+import com.ft.warehousefullfilmentsystem.inventory.exception.InventoryOverflowException;
+import com.ft.warehousefullfilmentsystem.inventory.repository.InventoryRepository;
+import com.ft.warehousefullfilmentsystem.inventory.repository.InventoryTransactionRepository;
+import com.ft.warehousefullfilmentsystem.inventory.service.InventoryService;
 import com.ft.warehousefullfilmentsystem.product.Product;
 import com.ft.warehousefullfilmentsystem.product.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,5 +1,10 @@
-package com.ft.warehousefullfilmentsystem.inventory;
+package com.ft.warehousefullfilmentsystem.inventory.api;
 
+import com.ft.warehousefullfilmentsystem.inventory.api.dto.InventoryResponse;
+import com.ft.warehousefullfilmentsystem.inventory.api.dto.InventoryTransactionResponse;
+import com.ft.warehousefullfilmentsystem.inventory.api.dto.ReceiveStockRequest;
+import com.ft.warehousefullfilmentsystem.inventory.api.dto.ReserveStockRequest;
+import com.ft.warehousefullfilmentsystem.inventory.service.InventoryService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

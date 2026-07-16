@@ -1,5 +1,6 @@
-package com.ft.warehousefullfilmentsystem.inventory;
+package com.ft.warehousefullfilmentsystem.inventory.repository;
 
+import com.ft.warehousefullfilmentsystem.inventory.domain.InventoryTransaction;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

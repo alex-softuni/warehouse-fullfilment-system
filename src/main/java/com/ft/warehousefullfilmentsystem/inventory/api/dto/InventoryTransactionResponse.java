@@ -1,4 +1,6 @@
-package com.ft.warehousefullfilmentsystem.inventory;
+package com.ft.warehousefullfilmentsystem.inventory.api.dto;
+
+import com.ft.warehousefullfilmentsystem.inventory.domain.InventoryTransactionType;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

@@ -1,8 +1,8 @@
 package com.ft.warehousefullfilmentsystem.common.exception;
 
-import com.ft.warehousefullfilmentsystem.inventory.InsufficientStockException;
-import com.ft.warehousefullfilmentsystem.inventory.InventoryNotFoundException;
-import com.ft.warehousefullfilmentsystem.inventory.InventoryOverflowException;
+import com.ft.warehousefullfilmentsystem.inventory.exception.InsufficientStockException;
+import com.ft.warehousefullfilmentsystem.inventory.exception.InventoryNotFoundException;
+import com.ft.warehousefullfilmentsystem.inventory.exception.InventoryOverflowException;
 import com.ft.warehousefullfilmentsystem.product.DuplicateSkuException;
 import com.ft.warehousefullfilmentsystem.product.ProductNotFoundException;
 import org.springframework.http.HttpStatus;

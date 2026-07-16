@@ -1,4 +1,4 @@
-package com.ft.warehousefullfilmentsystem.inventory;
+package com.ft.warehousefullfilmentsystem.inventory.domain;
 
 public enum InventoryTransactionType {
     STOCK_RECEIVED,
