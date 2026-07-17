@@ -1,13 +1,10 @@
 package com.ft.warehousefullfilmentsystem.inventory;
 
 
-import com.ft.warehousefullfilmentsystem.inventory.api.dto.ReleaseStockRequest;
+import com.ft.warehousefullfilmentsystem.inventory.api.dto.*;
 import com.ft.warehousefullfilmentsystem.inventory.domain.Inventory;
 import com.ft.warehousefullfilmentsystem.inventory.domain.InventoryTransaction;
 import com.ft.warehousefullfilmentsystem.inventory.domain.InventoryTransactionType;
-import com.ft.warehousefullfilmentsystem.inventory.api.dto.InventoryResponse;
-import com.ft.warehousefullfilmentsystem.inventory.api.dto.ReceiveStockRequest;
-import com.ft.warehousefullfilmentsystem.inventory.api.dto.ReserveStockRequest;
 import com.ft.warehousefullfilmentsystem.inventory.exception.InsufficientReservedStockException;
 import com.ft.warehousefullfilmentsystem.inventory.exception.InsufficientStockException;
 import com.ft.warehousefullfilmentsystem.inventory.exception.InventoryNotFoundException;
@@ -27,8 +24,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -415,6 +411,51 @@ public class InventoryServiceTest {
 
         verify(transactionRepository, never())
                 .save(any(InventoryTransaction.class));
+    }
+
+    @Test
+    void shouldShipReservedStockSuccessfully() {
+
+        UUID productId = UUID.randomUUID();
+        Product product = new Product();
+        product.setSku("MONITOR-001");
+
+        Inventory inventory = new Inventory();
+        inventory.setProduct(product);
+        inventory.setAvailableQuantity(7);
+        inventory.setReservedQuantity(2);
+
+        when(inventoryRepository.findByProductId(productId))
+                .thenReturn(Optional.of(inventory));
+        when(inventoryRepository.save(inventory))
+                .thenReturn(inventory);
+
+        InventoryResponse response = inventoryService.shipStock(new ShipStockRequest(productId, 2));
+
+        verify(inventoryRepository).save(inventory);
+
+        assertEquals(0,response.reservedQuantity());
+        assertEquals(7, response.availableQuantity());
+        assertEquals(7, response.physicalQuantity());
+
+        ArgumentCaptor<InventoryTransaction> transactionCaptor =
+                ArgumentCaptor.forClass(InventoryTransaction.class);
+
+        verify(transactionRepository)
+                .save(transactionCaptor.capture());
+
+        InventoryTransaction savedTransaction =
+                transactionCaptor.getValue();
+
+        assertEquals(
+                InventoryTransactionType.STOCK_SHIPPED,
+                savedTransaction.getType()
+        );
+
+        assertEquals(2, savedTransaction.getQuantity());
+        assertEquals(product, savedTransaction.getProduct());
+        assertNotNull(savedTransaction.getCreatedAt());
+
     }
 }
 
