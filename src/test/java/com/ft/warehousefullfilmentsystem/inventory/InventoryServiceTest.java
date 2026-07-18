@@ -457,5 +457,56 @@ public class InventoryServiceTest {
         assertNotNull(savedTransaction.getCreatedAt());
 
     }
+
+    @Test
+    void shouldThrowExceptionWhenShippingFromMissingInventory() {
+
+        UUID productId = UUID.randomUUID();
+
+        ShipStockRequest request = new ShipStockRequest(productId, 2);
+
+        when(inventoryRepository.findByProductId(productId))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                InventoryNotFoundException.class,
+                () -> inventoryService.shipStock(request)
+        );
+
+        verify(inventoryRepository, never())
+                .save(any(Inventory.class));
+
+        verify(transactionRepository, never())
+                .save(any(InventoryTransaction.class));
+
+
+    }
+
+    @Test
+    void shouldThrowExceptionWhenShippingWithInsufficientReservedStock() {
+        UUID productId = UUID.randomUUID();
+        Product product = new Product();
+        product.setSku("MONITOR-001");
+
+        Inventory inventory = new Inventory();
+        inventory.setProduct(product);
+        inventory.setAvailableQuantity(7);
+        inventory.setReservedQuantity(2);
+
+        when(inventoryRepository.findByProductId(productId))
+        .thenReturn(Optional.of(inventory));
+
+        assertThrows(InsufficientReservedStockException.class,
+                () -> inventoryService.shipStock(new ShipStockRequest(productId, 4)));
+
+        assertEquals(7, inventory.getAvailableQuantity());
+        assertEquals(2, inventory.getReservedQuantity());
+
+        verify(inventoryRepository, never())
+                .save(any(Inventory.class));
+
+        verify(transactionRepository, never())
+                .save(any(InventoryTransaction.class));
+    }
 }
 
