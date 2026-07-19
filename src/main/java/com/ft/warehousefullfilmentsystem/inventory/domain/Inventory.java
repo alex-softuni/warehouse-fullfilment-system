@@ -2,17 +2,15 @@ package com.ft.warehousefullfilmentsystem.inventory.domain;
 
 import com.ft.warehousefullfilmentsystem.product.Product;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.UUID;
 
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
-@Data
 @Table(name = "inventories")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Inventory {
 
     @Id
