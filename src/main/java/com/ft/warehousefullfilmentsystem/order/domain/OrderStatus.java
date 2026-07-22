@@ -1,4 +1,4 @@
-package com.ft.warehousefullfilmentsystem.Order;
+package com.ft.warehousefullfilmentsystem.order.domain;
 
 public enum OrderStatus {
     CONFIRMED,

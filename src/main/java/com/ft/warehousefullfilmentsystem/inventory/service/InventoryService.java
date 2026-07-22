@@ -242,4 +242,21 @@ public class InventoryService {
                 transaction.getCreatedAt()
         );
     }
+
+    @Transactional(readOnly = true)
+    public void validateAvailableStock(UUID productId, int quantity) {
+        Inventory inventory = inventoryRepository
+                .findByProductId(productId)
+                .orElseThrow(() ->
+                        new InventoryNotFoundException(productId)
+                );
+
+        if (inventory.getAvailableQuantity() < quantity) {
+            throw new InsufficientStockException(
+                    productId,
+                    quantity,
+                    inventory.getAvailableQuantity()
+            );
+        }
+    }
 }

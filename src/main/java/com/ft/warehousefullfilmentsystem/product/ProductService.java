@@ -2,7 +2,7 @@ package com.ft.warehousefullfilmentsystem.product;
 
 import com.ft.warehousefullfilmentsystem.inventory.domain.Inventory;
 import com.ft.warehousefullfilmentsystem.inventory.repository.InventoryRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,16 +10,11 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class ProductService {
 
     private final ProductRepository productRepository;
     private final InventoryRepository inventoryRepository;
-
-    @Autowired
-    public ProductService(ProductRepository productRepository, InventoryRepository inventoryRepository) {
-        this.productRepository = productRepository;
-        this.inventoryRepository = inventoryRepository;
-    }
 
     @Transactional
     public ProductResponse createProduct(ProductRequest request) {
@@ -48,6 +43,12 @@ public class ProductService {
         inventoryRepository.save(inventory);
 
         return toResponse(savedProduct);
+    }
+
+    @Transactional(readOnly = true)
+    public Product getActiveProduct(UUID productId) {
+        return productRepository.findByIdAndActiveTrue(productId)
+                .orElseThrow(() -> new ProductNotFoundException(productId));
     }
 
     @Transactional(readOnly = true)

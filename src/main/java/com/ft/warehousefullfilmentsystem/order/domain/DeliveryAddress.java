@@ -1,4 +1,4 @@
-package com.ft.warehousefullfilmentsystem.Order;
+package com.ft.warehousefullfilmentsystem.order.domain;
 
 import jakarta.persistence.Embeddable;
 

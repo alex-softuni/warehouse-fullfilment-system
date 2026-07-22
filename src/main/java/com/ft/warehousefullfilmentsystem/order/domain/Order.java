@@ -1,4 +1,4 @@
-package com.ft.warehousefullfilmentsystem.Order;
+package com.ft.warehousefullfilmentsystem.order.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -55,6 +55,11 @@ public class Order {
     @PreUpdate
     private void onUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    public void addItem(OrderItem item) {
+        items.add(item);
+        item.setOrder(this);
     }
 
 }
