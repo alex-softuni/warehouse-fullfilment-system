@@ -7,6 +7,7 @@ import com.ft.warehousefullfilmentsystem.order.domain.DeliveryAddress;
 import com.ft.warehousefullfilmentsystem.order.domain.Order;
 import com.ft.warehousefullfilmentsystem.order.domain.OrderItem;
 import com.ft.warehousefullfilmentsystem.order.domain.OrderStatus;
+import com.ft.warehousefullfilmentsystem.order.exception.DuplicateOrderItemException;
 import com.ft.warehousefullfilmentsystem.order.repository.OrderRepository;
 import com.ft.warehousefullfilmentsystem.product.Product;
 import com.ft.warehousefullfilmentsystem.product.ProductService;

@@ -1,9 +1,9 @@
-package com.ft.warehousefullfilmentsystem.order.service;
+package com.ft.warehousefullfilmentsystem.order.exception;
 
 import java.util.UUID;
 
 public class DuplicateOrderItemException extends RuntimeException {
     public DuplicateOrderItemException(UUID productId) {
-        super("Duplicate Order Item ID: " + productId);
+        super("Order contains duplicate product: " + productId);
     }
 }

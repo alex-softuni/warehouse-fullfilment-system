@@ -3,9 +3,9 @@ POST http://localhost:8080/api/products
 Content-Type: application/json
 
 {
-  "sku": "LAPTOP-001",
-  "name": "Business Laptop",
-  "price": 1499.99
+  "sku": "MONITOR-102",
+  "name": "Business Monitor",
+  "price": 1199.99
 }
 
 ### Create invalid product
@@ -66,12 +66,12 @@ POST http://localhost:8080/api/inventory/receive
 Content-Type: application/json
 
 {
-  "productId": "153a33fd-537c-49b6-babf-af000cc968f2",
+  "productId": "8e23705e-62ce-41ee-bfdd-bda9cf823ed3",
   "quantity": 250
 }
 
 ### Get inventory transaction history
-GET http://localhost:8080/api/inventory/product/153a33fd-537c-49b6-babf-af000cc968f2/transactions
+GET http://localhost:8080/api/inventory/product/1c78b0fa-75f9-4b00-ba30-9f6cbb11075a/transactions
 
 ### Missing product transaction history
 GET http://localhost:8080/api/inventory/product/11111111-1111-1111-1111-111111111111/transactions
@@ -81,8 +81,8 @@ POST http://localhost:8080/api/inventory/reserve
 Content-Type: application/json
 
 {
-  "productId": "153a33fd-537c-49b6-babf-af000cc968f2",
-  "quantity": 3
+  "productId": "8e23705e-62ce-41ee-bfdd-bda9cf823ed3",
+  "quantity": 300
 }
 
 ### Reserve more than available stock
@@ -99,14 +99,68 @@ POST http://localhost:8080/api/inventory/release
 Content-Type: application/json
 
 {
-  "productId": "153a33fd-537c-49b6-babf-af000cc968f2",
-  "quantity": 2
+  "productId": "8e23705e-62ce-41ee-bfdd-bda9cf823ed3",
+  "quantity": 200
 }
 ### Ship reserved stock
 POST http://localhost:8080/api/inventory/ship
 Content-Type: application/json
 
 {
-  "productId": "153a33fd-537c-49b6-babf-af000cc968f2",
+  "productId": "8e23705e-62ce-41ee-bfdd-bda9cf823ed3",
   "quantity": 2
+}
+
+### Create order with order items
+POST http://localhost:8080/api/orders
+Content-Type: application/json
+
+{
+  "customerName": "Alexis Sanchez",
+  "customerEmail": "alexis@sanchez.com",
+  "address": {
+    "country": "Spain",
+    "city": "Madrid",
+    "postalCode": "0007",
+    "street": "Vamos! 07"
+  },
+  "items": [
+    {
+      "productId": "8e23705e-62ce-41ee-bfdd-bda9cf823ed3",
+      "quantity": 10
+    },
+    {
+      "productId": "1c78b0fa-75f9-4b00-ba30-9f6cbb11075a",
+      "quantity": 10
+    },
+    {
+      "productId": "3da0f23b-0395-49dd-92bf-b39fb5904a61",
+      "quantity": 22
+    }
+  ]
+}
+
+### Create order with insufficient reserve
+POST http://localhost:8080/api/orders
+Content-Type: application/json
+
+{
+  "customerName": "Cristiano Ronaldo",
+  "customerEmail": "CR7@SUIII.com",
+  "address": {
+    "country": "Spain",
+    "city": "Madrid",
+    "postalCode": "0007",
+    "street": "Vamos! 07"
+  },
+  "items": [
+    {
+      "productId": "8e23705e-62ce-41ee-bfdd-bda9cf823ed3",
+      "quantity": 10
+    },
+    {
+      "productId": "1c78b0fa-75f9-4b00-ba30-9f6cbb11075a",
+      "quantity": 799
+    }
+  ]
 }
