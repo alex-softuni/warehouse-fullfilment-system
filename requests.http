@@ -170,3 +170,9 @@ GET http://localhost:8080/api/orders/1c78b0fa-75f9-4b00-ba30-9f6cbb11075a
 
 ### Get order by ID -> VALID
 GET http://localhost:8080/api/orders/75025f0d-29fc-4f1b-8bad-98b6b1e93656
+
+### Cancel order
+PATCH http://localhost:8080/api/orders/75025f0d-29fc-4f1b-8bad-98b6b1e93656/cancel
+
+### Cancel non-existing order
+PATCH http://localhost:8080/api/orders/75025f0d-29fc-4f1b-8bad-98b6b1e7777/cancel

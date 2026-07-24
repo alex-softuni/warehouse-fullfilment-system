@@ -5,6 +5,7 @@ import com.ft.warehousefullfilmentsystem.inventory.exception.InsufficientStockEx
 import com.ft.warehousefullfilmentsystem.inventory.exception.InventoryNotFoundException;
 import com.ft.warehousefullfilmentsystem.inventory.exception.InventoryOverflowException;
 import com.ft.warehousefullfilmentsystem.order.exception.DuplicateOrderItemException;
+import com.ft.warehousefullfilmentsystem.order.exception.InvalidOrderStatusException;
 import com.ft.warehousefullfilmentsystem.order.exception.OrderNotFoundException;
 import com.ft.warehousefullfilmentsystem.product.DuplicateSkuException;
 import com.ft.warehousefullfilmentsystem.product.ProductNotFoundException;
@@ -105,6 +106,7 @@ public class GlobalExceptionHandler {
                 Map.of()
         );
     }
+
     @ExceptionHandler(InsufficientReservedStockException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ApiError handleInsufficientReservedStock(
@@ -117,6 +119,7 @@ public class GlobalExceptionHandler {
                 Map.of()
         );
     }
+
     @ExceptionHandler(DuplicateOrderItemException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiError handleDuplicateOrderItem(
@@ -129,6 +132,7 @@ public class GlobalExceptionHandler {
                 Map.of()
         );
     }
+
     @ExceptionHandler(OrderNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ApiError handleOrderNotFound(
@@ -136,6 +140,19 @@ public class GlobalExceptionHandler {
     ) {
         return new ApiError(
                 HttpStatus.NOT_FOUND.value(),
+                exception.getMessage(),
+                LocalDateTime.now(),
+                Map.of()
+        );
+    }
+
+    @ExceptionHandler(InvalidOrderStatusException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError handleInvalidOrderStatus(
+            InvalidOrderStatusException exception
+    ) {
+        return new ApiError(
+                HttpStatus.CONFLICT.value(),
                 exception.getMessage(),
                 LocalDateTime.now(),
                 Map.of()

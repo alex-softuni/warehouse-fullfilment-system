@@ -1,5 +1,6 @@
 package com.ft.warehousefullfilmentsystem.order.service;
 
+import com.ft.warehousefullfilmentsystem.inventory.api.dto.ReleaseStockRequest;
 import com.ft.warehousefullfilmentsystem.inventory.api.dto.ReserveStockRequest;
 import com.ft.warehousefullfilmentsystem.inventory.service.InventoryService;
 import com.ft.warehousefullfilmentsystem.order.api.dto.*;
@@ -8,6 +9,7 @@ import com.ft.warehousefullfilmentsystem.order.domain.Order;
 import com.ft.warehousefullfilmentsystem.order.domain.OrderItem;
 import com.ft.warehousefullfilmentsystem.order.domain.OrderStatus;
 import com.ft.warehousefullfilmentsystem.order.exception.DuplicateOrderItemException;
+import com.ft.warehousefullfilmentsystem.order.exception.InvalidOrderStatusException;
 import com.ft.warehousefullfilmentsystem.order.exception.OrderNotFoundException;
 import com.ft.warehousefullfilmentsystem.order.repository.OrderRepository;
 import com.ft.warehousefullfilmentsystem.product.Product;
@@ -69,6 +71,31 @@ public class OrderService {
 
         return toResponse(savedOrder);
 
+    }
+
+    @Transactional
+    public OrderResponse cancelOrder(UUID orderId) {
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderNotFoundException(orderId));
+
+        if (order.getStatus() != OrderStatus.CONFIRMED) {
+            throw new InvalidOrderStatusException(
+                    orderId,
+                    order.getStatus(),
+                    "cancel");
+        }
+
+        order.getItems().forEach(orderItem -> {
+            inventoryService.releaseReservedStock(
+                    new ReleaseStockRequest(
+                            orderItem.getProduct().getId(),
+                            orderItem.getQuantity()));
+        });
+        order.setStatus(OrderStatus.CANCELLED);
+
+        Order savedOrder = orderRepository.save(order);
+        return toResponse(savedOrder);
     }
 
     @Transactional(readOnly = true)
