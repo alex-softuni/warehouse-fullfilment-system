@@ -7,10 +7,12 @@ import com.ft.warehousefullfilmentsystem.order.api.dto.CreateOrderRequest;
 import com.ft.warehousefullfilmentsystem.order.api.dto.DeliveryAddressRequest;
 import com.ft.warehousefullfilmentsystem.order.api.dto.OrderItemRequest;
 import com.ft.warehousefullfilmentsystem.order.api.dto.OrderResponse;
+import com.ft.warehousefullfilmentsystem.order.domain.DeliveryAddress;
 import com.ft.warehousefullfilmentsystem.order.domain.Order;
 import com.ft.warehousefullfilmentsystem.order.domain.OrderItem;
 import com.ft.warehousefullfilmentsystem.order.domain.OrderStatus;
 import com.ft.warehousefullfilmentsystem.order.exception.DuplicateOrderItemException;
+import com.ft.warehousefullfilmentsystem.order.exception.OrderNotFoundException;
 import com.ft.warehousefullfilmentsystem.order.repository.OrderRepository;
 import com.ft.warehousefullfilmentsystem.order.service.OrderService;
 import com.ft.warehousefullfilmentsystem.product.Product;
@@ -25,6 +27,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -352,5 +355,53 @@ public class OrderServiceTest {
 
         verify(orderRepository, never())
                 .save(any(Order.class));
+    }
+
+    @Test
+    void shouldThrowOrderNotFoundExceptionWhenOrderDoesNotExist() {
+
+        UUID orderId = UUID.randomUUID();
+
+        when(orderRepository.findById(orderId))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                OrderNotFoundException.class,
+                () -> orderService.getOrderById(orderId)
+        );
+
+        verify(orderRepository).findById(orderId);
+    }
+
+    @Test
+    void shouldReturnOrderWhenOrderExists() {
+
+        UUID orderId = UUID.randomUUID();
+
+        Order order = new Order();
+        order.setId(orderId);
+        order.setStatus(OrderStatus.CONFIRMED);
+        order.setCustomerName("Alexander");
+        order.setCustomerEmail("alexander@example.com");
+        order.setDeliveryAddress(new DeliveryAddress(
+                "Bulgaria",
+                "Sofia",
+                "1000",
+                "Vitosha Boulevard",
+                "Apartment 7"
+        ));
+
+        when(orderRepository.findById(orderId))
+                .thenReturn(Optional.of(order));
+
+        OrderResponse response = orderService.getOrderById(orderId);
+
+        assertEquals(orderId, response.orderId());
+        assertEquals(OrderStatus.CONFIRMED, response.status());
+        assertEquals("Alexander", response.customerName());
+        assertEquals("alexander@example.com", response.customerEmail());
+        assertEquals(BigDecimal.ZERO, response.totalPrice());
+
+        verify(orderRepository).findById(orderId);
     }
 }
