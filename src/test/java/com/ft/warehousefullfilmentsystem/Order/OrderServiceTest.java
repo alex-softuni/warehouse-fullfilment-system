@@ -2,6 +2,7 @@ package com.ft.warehousefullfilmentsystem.Order;
 
 import com.ft.warehousefullfilmentsystem.inventory.api.dto.ReleaseStockRequest;
 import com.ft.warehousefullfilmentsystem.inventory.api.dto.ReserveStockRequest;
+import com.ft.warehousefullfilmentsystem.inventory.api.dto.ShipStockRequest;
 import com.ft.warehousefullfilmentsystem.inventory.exception.InsufficientReservedStockException;
 import com.ft.warehousefullfilmentsystem.inventory.exception.InsufficientStockException;
 import com.ft.warehousefullfilmentsystem.inventory.service.InventoryService;
@@ -499,7 +500,7 @@ public class OrderServiceTest {
     }
 
     @Test
-    void shouldNotCancelOrderWhenSecondStockReleaseFails() {
+    void shouldKeepOrderConfirmedWhenSecondReservationReleaseFails() {
 
         UUID orderId = UUID.randomUUID();
         UUID monitorId = UUID.randomUUID();
@@ -558,6 +559,162 @@ public class OrderServiceTest {
         verify(inventoryService)
                 .releaseReservedStock(
                         new ReleaseStockRequest(keyboardId, 1)
+                );
+
+        verify(orderRepository, never())
+                .save(any(Order.class));
+
+        assertEquals(OrderStatus.CONFIRMED, order.getStatus());
+    }
+
+    @Test
+    void shouldThrowWhenShippingMissingOrder() {
+
+        UUID orderId = UUID.randomUUID();
+
+        when(orderRepository.findById(orderId))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                OrderNotFoundException.class,
+                () -> orderService.shipOrder(orderId));
+
+        verify(orderRepository).findById(orderId);
+        verifyNoInteractions(inventoryService);
+    }
+
+    @Test
+    void shouldThrowWhenShippingOrderWithInvalidStatus() {
+
+        UUID orderId = UUID.randomUUID();
+
+        Order order = new Order();
+        order.setId(orderId);
+        order.setStatus(OrderStatus.CANCELLED);
+
+        when(orderRepository.findById(orderId))
+                .thenReturn(Optional.of(order));
+
+        assertThrows(
+                InvalidOrderStatusException.class,
+                () -> orderService.shipOrder(orderId)
+        );
+
+        verify(orderRepository).findById(orderId);
+        verifyNoInteractions(inventoryService);
+
+        verify(orderRepository, never())
+                .save(any(Order.class));
+    }
+
+    @Test
+    void shouldShipConfirmedOrderSuccessfully() {
+
+        UUID orderId = UUID.randomUUID();
+        UUID productId = UUID.randomUUID();
+
+        Product product = new Product();
+        product.setId(productId);
+
+        OrderItem orderItem = new OrderItem();
+        orderItem.setProduct(product);
+        orderItem.setQuantity(2);
+        orderItem.setProductSku("MONITOR-001");
+        orderItem.setProductName("Dell Monitor");
+        orderItem.setUnitPrice(new BigDecimal("200.00"));
+
+        DeliveryAddress deliveryAddress = new DeliveryAddress();
+        deliveryAddress.setCountry("Bulgaria");
+        deliveryAddress.setCity("Sofia");
+        deliveryAddress.setPostalCode("1000");
+        deliveryAddress.setStreet("Vitosha Boulevard");
+        deliveryAddress.setAddressLine("Apartment 7");
+
+        Order order = new Order();
+        order.setId(orderId);
+        order.setStatus(OrderStatus.CONFIRMED);
+        order.setCustomerName("Alexander");
+        order.setCustomerEmail("alexander@example.com");
+        order.setDeliveryAddress(deliveryAddress);
+        order.addItem(orderItem);
+
+        when(orderRepository.findById(orderId))
+                .thenReturn(Optional.of(order));
+
+        when(orderRepository.save(any(Order.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        OrderResponse response = orderService.shipOrder(orderId);
+
+        assertEquals(OrderStatus.SHIPPED, response.status());
+        assertEquals(OrderStatus.SHIPPED, order.getStatus());
+
+        verify(inventoryService)
+                .shipStock(new ShipStockRequest(productId, 2));
+
+        verify(orderRepository).save(order);
+    }
+
+    @Test
+    void shouldKeepOrderConfirmedWhenSecondShipmentFails() {
+
+        UUID orderId = UUID.randomUUID();
+        UUID monitorId = UUID.randomUUID();
+        UUID keyboardId = UUID.randomUUID();
+
+        Product monitor = new Product();
+        monitor.setId(monitorId);
+
+        Product keyboard = new Product();
+        keyboard.setId(keyboardId);
+
+        OrderItem monitorItem = new OrderItem();
+        monitorItem.setProduct(monitor);
+        monitorItem.setQuantity(2);
+
+        OrderItem keyboardItem = new OrderItem();
+        keyboardItem.setProduct(keyboard);
+        keyboardItem.setQuantity(1);
+
+        Order order = new Order();
+        order.setId(orderId);
+        order.setStatus(OrderStatus.CONFIRMED);
+        order.addItem(monitorItem);
+        order.addItem(keyboardItem);
+
+        when(orderRepository.findById(orderId))
+                .thenReturn(Optional.of(order));
+
+        doAnswer(invocation -> {
+
+            ShipStockRequest request = invocation.getArgument(0);
+
+            if (request.productId().equals(keyboardId)) {
+                throw new InsufficientReservedStockException(
+                        keyboardId,
+                        1,
+                        0
+                );
+            }
+
+            return null;
+        })
+                .when(inventoryService)
+                .shipStock(any(ShipStockRequest.class));
+
+        assertThrows(
+                InsufficientReservedStockException.class,
+                () -> orderService.shipOrder(orderId)
+        );
+
+        verify(inventoryService)
+                .shipStock(
+                        new ShipStockRequest(monitorId, 2)
+                );
+
+        verify(inventoryService)
+                .shipStock(
+                        new ShipStockRequest(keyboardId, 1)
                 );
 
         verify(orderRepository, never())
