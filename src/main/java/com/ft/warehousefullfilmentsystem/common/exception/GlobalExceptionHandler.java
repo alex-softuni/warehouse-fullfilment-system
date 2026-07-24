@@ -5,6 +5,7 @@ import com.ft.warehousefullfilmentsystem.inventory.exception.InsufficientStockEx
 import com.ft.warehousefullfilmentsystem.inventory.exception.InventoryNotFoundException;
 import com.ft.warehousefullfilmentsystem.inventory.exception.InventoryOverflowException;
 import com.ft.warehousefullfilmentsystem.order.exception.DuplicateOrderItemException;
+import com.ft.warehousefullfilmentsystem.order.exception.OrderNotFoundException;
 import com.ft.warehousefullfilmentsystem.product.DuplicateSkuException;
 import com.ft.warehousefullfilmentsystem.product.ProductNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -123,6 +124,18 @@ public class GlobalExceptionHandler {
     ) {
         return new ApiError(
                 HttpStatus.BAD_REQUEST.value(),
+                exception.getMessage(),
+                LocalDateTime.now(),
+                Map.of()
+        );
+    }
+    @ExceptionHandler(OrderNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiError handleOrderNotFound(
+            OrderNotFoundException exception
+    ) {
+        return new ApiError(
+                HttpStatus.NOT_FOUND.value(),
                 exception.getMessage(),
                 LocalDateTime.now(),
                 Map.of()
