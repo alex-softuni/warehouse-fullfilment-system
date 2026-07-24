@@ -50,4 +50,13 @@ public class OrderController {
                 .status(HttpStatus.OK)
                 .body(response);
     }
+
+    @PatchMapping("/{orderId}/ship")
+    public ResponseEntity<OrderResponse> shipOrder(@PathVariable("orderId") UUID orderId) {
+
+        OrderResponse response = orderService.shipOrder(orderId);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
+    }
 }
