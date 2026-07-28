@@ -28,6 +28,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -721,5 +722,49 @@ public class OrderServiceTest {
                 .save(any(Order.class));
 
         assertEquals(OrderStatus.CONFIRMED, order.getStatus());
+    }
+
+    @Test
+    void shouldReturnPaginatedOrders() {
+
+        Pageable pageable = PageRequest.of(
+                0,
+                5,
+                Sort.by(Sort.Direction.DESC, "createdAt")
+        );
+
+        DeliveryAddress address = new DeliveryAddress();
+        address.setCountry("Bulgaria");
+        address.setCity("Sofia");
+        address.setPostalCode("1000");
+        address.setStreet("Vitosha Boulevard");
+        address.setAddressLine("Apartment 7");
+
+        Order order = new Order();
+        order.setId(UUID.randomUUID());
+        order.setStatus(OrderStatus.CONFIRMED);
+        order.setCustomerName("Alexander");
+        order.setCustomerEmail("alexander@example.com");
+        order.setDeliveryAddress(address);
+
+        Page<Order> repositoryPage = new PageImpl<>(
+                List.of(order),
+                pageable,
+                1
+        );
+
+        when(orderRepository.findAll(pageable))
+                .thenReturn(repositoryPage);
+
+        Page<OrderResponse> response =
+                orderService.getAllOrders(pageable);
+
+        assertEquals(1, response.getTotalElements());
+        assertEquals(1, response.getTotalPages());
+        assertEquals(1, response.getContent().size());
+        assertEquals(OrderStatus.CONFIRMED,
+                response.getContent().getFirst().status());
+
+        verify(orderRepository).findAll(pageable);
     }
 }
