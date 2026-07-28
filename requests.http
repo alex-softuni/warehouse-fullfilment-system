@@ -3,9 +3,9 @@ POST http://localhost:8080/api/products
 Content-Type: application/json
 
 {
-  "sku": "DOCKER-112",
+  "sku": "MOCKER-112",
   "name": "DOCKER TEST",
-  "price": 1111.11
+  "price": 13111.11
 }
 
 ### Create invalid product

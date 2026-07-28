@@ -19,9 +19,9 @@ import com.ft.warehousefullfilmentsystem.order.exception.InvalidOrderStatusExcep
 import com.ft.warehousefullfilmentsystem.order.exception.OrderNotFoundException;
 import com.ft.warehousefullfilmentsystem.order.repository.OrderRepository;
 import com.ft.warehousefullfilmentsystem.order.service.OrderService;
-import com.ft.warehousefullfilmentsystem.product.Product;
-import com.ft.warehousefullfilmentsystem.product.ProductNotFoundException;
-import com.ft.warehousefullfilmentsystem.product.ProductService;
+import com.ft.warehousefullfilmentsystem.product.domain.Product;
+import com.ft.warehousefullfilmentsystem.product.exception.ProductNotFoundException;
+import com.ft.warehousefullfilmentsystem.product.service.ProductService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

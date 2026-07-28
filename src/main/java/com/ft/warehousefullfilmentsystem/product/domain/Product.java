@@ -1,4 +1,4 @@
-package com.ft.warehousefullfilmentsystem.product;
+package com.ft.warehousefullfilmentsystem.product.domain;
 
 import jakarta.persistence.*;
 import lombok.*;

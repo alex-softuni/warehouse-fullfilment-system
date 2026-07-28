@@ -1,7 +1,14 @@
-package com.ft.warehousefullfilmentsystem.product;
+package com.ft.warehousefullfilmentsystem.product.service;
 
 import com.ft.warehousefullfilmentsystem.inventory.domain.Inventory;
 import com.ft.warehousefullfilmentsystem.inventory.repository.InventoryRepository;
+import com.ft.warehousefullfilmentsystem.product.api.dto.ProductRequest;
+import com.ft.warehousefullfilmentsystem.product.api.dto.ProductResponse;
+import com.ft.warehousefullfilmentsystem.product.api.dto.UpdateProductRequest;
+import com.ft.warehousefullfilmentsystem.product.domain.Product;
+import com.ft.warehousefullfilmentsystem.product.exception.DuplicateSkuException;
+import com.ft.warehousefullfilmentsystem.product.exception.ProductNotFoundException;
+import com.ft.warehousefullfilmentsystem.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

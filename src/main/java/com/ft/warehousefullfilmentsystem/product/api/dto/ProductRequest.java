@@ -1,4 +1,4 @@
-package com.ft.warehousefullfilmentsystem.product;
+package com.ft.warehousefullfilmentsystem.product.api.dto;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;

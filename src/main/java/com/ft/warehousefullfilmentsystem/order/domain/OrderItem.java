@@ -1,6 +1,6 @@
 package com.ft.warehousefullfilmentsystem.order.domain;
 
-import com.ft.warehousefullfilmentsystem.product.Product;
+import com.ft.warehousefullfilmentsystem.product.domain.Product;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

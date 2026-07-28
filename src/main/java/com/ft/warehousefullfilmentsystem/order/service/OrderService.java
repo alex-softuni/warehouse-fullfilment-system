@@ -13,8 +13,8 @@ import com.ft.warehousefullfilmentsystem.order.exception.DuplicateOrderItemExcep
 import com.ft.warehousefullfilmentsystem.order.exception.InvalidOrderStatusException;
 import com.ft.warehousefullfilmentsystem.order.exception.OrderNotFoundException;
 import com.ft.warehousefullfilmentsystem.order.repository.OrderRepository;
-import com.ft.warehousefullfilmentsystem.product.Product;
-import com.ft.warehousefullfilmentsystem.product.ProductService;
+import com.ft.warehousefullfilmentsystem.product.domain.Product;
+import com.ft.warehousefullfilmentsystem.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.data.domain.Page;

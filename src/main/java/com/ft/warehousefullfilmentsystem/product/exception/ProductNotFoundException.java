@@ -1,4 +1,4 @@
-package com.ft.warehousefullfilmentsystem.product;
+package com.ft.warehousefullfilmentsystem.product.exception;
 
 import java.util.UUID;
 

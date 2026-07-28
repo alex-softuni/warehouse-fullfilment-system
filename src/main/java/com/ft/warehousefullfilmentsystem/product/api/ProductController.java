@@ -1,5 +1,9 @@
-package com.ft.warehousefullfilmentsystem.product;
+package com.ft.warehousefullfilmentsystem.product.api;
 
+import com.ft.warehousefullfilmentsystem.product.api.dto.ProductRequest;
+import com.ft.warehousefullfilmentsystem.product.api.dto.ProductResponse;
+import com.ft.warehousefullfilmentsystem.product.api.dto.UpdateProductRequest;
+import com.ft.warehousefullfilmentsystem.product.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

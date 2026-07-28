@@ -1,4 +1,4 @@
-package com.ft.warehousefullfilmentsystem.product;
+package com.ft.warehousefullfilmentsystem.product.api.dto;
 
 import java.math.BigDecimal;
 import java.util.UUID;

@@ -7,8 +7,8 @@ import com.ft.warehousefullfilmentsystem.inventory.exception.InventoryOverflowEx
 import com.ft.warehousefullfilmentsystem.order.exception.DuplicateOrderItemException;
 import com.ft.warehousefullfilmentsystem.order.exception.InvalidOrderStatusException;
 import com.ft.warehousefullfilmentsystem.order.exception.OrderNotFoundException;
-import com.ft.warehousefullfilmentsystem.product.DuplicateSkuException;
-import com.ft.warehousefullfilmentsystem.product.ProductNotFoundException;
+import com.ft.warehousefullfilmentsystem.product.exception.DuplicateSkuException;
+import com.ft.warehousefullfilmentsystem.product.exception.ProductNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;

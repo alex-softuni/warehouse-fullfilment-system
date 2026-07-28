@@ -12,8 +12,8 @@ import com.ft.warehousefullfilmentsystem.inventory.exception.InventoryOverflowEx
 import com.ft.warehousefullfilmentsystem.inventory.repository.InventoryRepository;
 import com.ft.warehousefullfilmentsystem.inventory.repository.InventoryTransactionRepository;
 import com.ft.warehousefullfilmentsystem.inventory.service.InventoryService;
-import com.ft.warehousefullfilmentsystem.product.Product;
-import com.ft.warehousefullfilmentsystem.product.ProductRepository;
+import com.ft.warehousefullfilmentsystem.product.domain.Product;
+import com.ft.warehousefullfilmentsystem.product.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

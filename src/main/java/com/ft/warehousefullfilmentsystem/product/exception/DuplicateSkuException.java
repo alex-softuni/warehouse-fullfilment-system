@@ -1,4 +1,4 @@
-package com.ft.warehousefullfilmentsystem.product;
+package com.ft.warehousefullfilmentsystem.product.exception;
 
 public class DuplicateSkuException extends RuntimeException {
     public DuplicateSkuException(String sku) {
