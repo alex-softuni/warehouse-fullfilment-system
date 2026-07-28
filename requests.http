@@ -187,3 +187,9 @@ PATCH http://localhost:8080/api/orders/8f85a599-9d3f-46cb-a875-1b84fc4a22d8/ship
 
 ### Ship MISSING order -> 404 Not found
 PATCH http://localhost:8080/api/orders/9f99a999-9d9f-99cb-a999-9b99fc9a99d9/ship
+
+### Get first page of orders sorted desc and size 5
+GET http://localhost:8080/api/orders?page=0&size=5&sort=createdAt,desc
+
+### Get second page
+GET http://localhost:8080/api/orders?page=1&size=5

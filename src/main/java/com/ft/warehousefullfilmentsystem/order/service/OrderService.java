@@ -17,6 +17,8 @@ import com.ft.warehousefullfilmentsystem.product.Product;
 import com.ft.warehousefullfilmentsystem.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +36,12 @@ public class OrderService {
     private final ProductService productService;
     private final InventoryService inventoryService;
 
+    @Transactional(readOnly = true)
+    public Page<OrderResponse> getAllOrders(Pageable pageable) {
+
+        return orderRepository.findAll(pageable)
+                .map(this::toResponse);
+    }
 
     @Transactional
     public OrderResponse createOrder(CreateOrderRequest request) {
