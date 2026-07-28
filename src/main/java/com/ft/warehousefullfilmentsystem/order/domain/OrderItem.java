@@ -28,8 +28,13 @@ public class OrderItem {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
+    @Column(nullable = false, length = 50)
     private String productSku;
+
+    @Column(nullable = false, length = 150)
     private String productName;
+
+    @Column(nullable = false)
     private int quantity;
 
     @Column(nullable = false, precision = 19, scale = 2)

@@ -19,7 +19,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 20)
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
